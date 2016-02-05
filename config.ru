@@ -7,6 +7,10 @@ class MyApp < Sinatra::Base
   get '/' do
     'Hello world!'
   end
+
+  post '/github' do
+    RelaxCI::Triggers::Github.trigger(request.body)
+  end
 end
 
 run MyApp
