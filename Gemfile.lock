@@ -2,12 +2,14 @@ GEM
   remote: https://rubygems.org/
   specs:
     redis (3.2.2)
+    rugged (0.23.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   redis
+  rugged
 
 BUNDLED WITH
    1.11.2
