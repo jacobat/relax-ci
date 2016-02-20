@@ -10,6 +10,7 @@ log_dir.mkdir unless log_dir.exist?
 logger = Logger.new(log_dir.join('development.log'))
 bus = RelaxCI::Bus.new(logger)
 bus.add_observer(RelaxCI::InitializeRepos.new(bus, logger, RELAX_ROOT.join('repositories')))
+bus.add_observer(RelaxCI::RunScript.new(bus, logger))
 
 class MyApp < Sinatra::Base
   get '/' do
