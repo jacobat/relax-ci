@@ -33,7 +33,10 @@ module RelaxCI
         `git clone --mirror --no-single-branch --depth=50 #{message[:repos_url]} #{new_repository}`
       end
 
-      @bus.send_message(message.merge(type: "RepositoryCacheUpdated"))
+      @bus.send_message(
+        message.merge(type: "RepositoryCacheUpdated",
+                      repository_path: new_repository.to_s)
+      )
     end
 
     def subpath?(parent_path, child_path)
