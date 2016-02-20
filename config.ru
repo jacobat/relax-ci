@@ -19,7 +19,10 @@ class MyApp < Sinatra::Base
 
   post '/github' do
     if request.env["HTTP_X_GITHUB_EVENT"] == 'push'
-      RelaxCI::Triggers::Github.new(settings.bus).trigger(JSON.parse(request.body.read))
+      body = request.body.read
+      data = JSON.parse(body)
+      File.write("hook-#{data['after']}", body)
+      RelaxCI::Triggers::Github.new(settings.bus).trigger(data)
     end
     nil
   end
