@@ -18,6 +18,9 @@ class MyApp < Sinatra::Base
   end
 
   post '/github' do
+    if request.env["HTTP_X_GITHUB_EVENT"] == 'ping'
+      "Hello GitHub"
+    end
     if request.env["HTTP_X_GITHUB_EVENT"] == 'push'
       body = request.body.read
       data = JSON.parse(body)
