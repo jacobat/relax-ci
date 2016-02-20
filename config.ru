@@ -2,9 +2,14 @@ require 'json'
 require 'pathname'
 require 'sinatra/base'
 require 'relax-ci'
+require 'logger'
 
-bus = RelaxCI::Bus.new
-bus.add_observer(RelaxCI::InitializeRepos.new(bus, Pathname.new('./repositories')))
+RELAX_ROOT = Pathname.new(__FILE__).parent
+log_dir = RELAX_ROOT.join('log')
+log_dir.mkdir unless log_dir.exist?
+logger = Logger.new(log_dir.join('development.log'))
+bus = RelaxCI::Bus.new(logger)
+bus.add_observer(RelaxCI::InitializeRepos.new(bus, logger, RELAX_ROOT.join('repositories')))
 
 class MyApp < Sinatra::Base
   get '/' do

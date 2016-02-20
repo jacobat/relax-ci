@@ -2,15 +2,18 @@ require 'fileutils'
 
 module RelaxCI
   class InitializeRepos
-    def initialize(bus, repos_collection_dir)
+    attr_reader :logger
+
+    def initialize(bus, logger, repos_collection_dir)
       @bus = bus
+      @logger = logger
       @repos_collection_dir = repos_collection_dir
     end
 
     def update(message)
       return unless message[:type] == "PostCommitHookFired"
       unless @repos_collection_dir.exist?
-        puts "Creating #{@repos_collection_dir}"
+        logger.debug "Creating #{@repos_collection_dir}"
         FileUtils.mkdir_p(@repos_collection_dir)
       end
 
@@ -23,11 +26,11 @@ module RelaxCI
       end
 
       if new_repository.exist?
-        puts "Fetching #{new_repository}"
+        logger.debug "Fetching #{new_repository}"
         `git -C #{new_repository} fetch`
       else
-        puts "Cloning #{new_repository}"
-        `git clone --bare --depth=50 #{message[:repos_url]} #{new_repository}`
+        logger.debug "Cloning #{new_repository}"
+        `git clone --mirror --no-single-branch --depth=50 #{message[:repos_url]} #{new_repository}`
       end
 
       @bus.send_message(message.merge(type: "RepositoryCacheUpdated"))
